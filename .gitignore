@@ -1,0 +1,20 @@
+# Entorno virtual
+env/
+venv/
+
+# Archivos de Django
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+db.sqlite3
+
+# Archivos de configuración local
+.env
+*.log
+
+# Archivos temporales
+*.bak
+*.tmp
+.DS_Store
