@@ -1,6 +1,17 @@
 from django.contrib import admin
 from .models import Category, Product, Zone, Device, Measurement, AlertRule, ProductAlertRule
 
+# ─────────────────────────────
+# ACCIONES PERSONALIZADAS
+# ─────────────────────────────
+@admin.action(description="Activar dispositivos seleccionados")
+def make_active(modeladmin, request, queryset):
+    queryset.update(status="ACTIVE")
+
+@admin.action(description="Desactivar dispositivos seleccionados")
+def make_inactive(modeladmin, request, queryset):
+    queryset.update(status="INACTIVE")
+
 # Personalización general del Admin
 admin.site.site_header = "EcoEnergy — Admin"
 admin.site.site_title = "EcoEnergy Admin"
@@ -65,6 +76,7 @@ class DeviceAdmin(admin.ModelAdmin):
     ordering = ("organization", "zone")
     list_select_related = ("product", "zone", "organization")
     list_per_page = 50
+    actions = [make_active, make_inactive]
 
 
 # ─────────────────────────────
