@@ -1,18 +1,11 @@
 from django.contrib import admin
-from .models import Organization, UserProfile, Module, Role, RoleModulePermission
-
-
-@admin.register(Organization)
-class OrganizationAdmin(admin.ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
-    ordering = ("name",)
+from .models import UserProfile, Module, Role, RoleModulePermission
 
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "organization", "role", "rut", "telefono")
-    list_filter = ("organization", "role")
+    list_display = ("user", "organization",  "rut", "telefono")
+    #list_filter = ("organization")
     search_fields = ("user__username", "rut", "organization__name")
     ordering = ("organization", "user")
     autocomplete_fields = ("organization",)

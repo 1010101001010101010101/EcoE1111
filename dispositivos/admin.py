@@ -67,6 +67,20 @@ class ZoneAdmin(admin.ModelAdmin):
     list_select_related = ("organization",)
     list_per_page = 50
 
+    # Scoping por organización
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(organization=request.user.userprofile.organization)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "organization" and not request.user.is_superuser:
+            kwargs["queryset"] = kwargs["queryset"].filter(
+                id=request.user.userprofile.organization.id
+            )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
 
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
@@ -77,6 +91,26 @@ class DeviceAdmin(admin.ModelAdmin):
     list_select_related = ("product", "zone", "organization")
     list_per_page = 50
     actions = [make_active, make_inactive]
+
+    # Scoping por organización
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(organization=request.user.userprofile.organization)
+
+    # Limitar Zonas y Productos al crear
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if not request.user.is_superuser:
+            if db_field.name == "zone":
+                kwargs["queryset"] = kwargs["queryset"].filter(
+                    organization=request.user.userprofile.organization
+                )
+            elif db_field.name == "organization":
+                kwargs["queryset"] = kwargs["queryset"].filter(
+                    id=request.user.userprofile.organization.id
+                )
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 # ─────────────────────────────
@@ -90,3 +124,10 @@ class MeasurementAdmin(admin.ModelAdmin):
     ordering = ("-timestamp",)
     list_select_related = ("device",)
     list_per_page = 50
+
+    # Scoping por organización
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        if request.user.is_superuser:
+            return qs
+        return qs.filter(device__organization=request.user.userprofile.organization)

@@ -1,18 +1,11 @@
 from django.conf import settings
 from django.db import models
-from organizations.models import Organization
 from django.contrib.auth.models import Group
-
-class Organization(models.Model):
-    name = models.CharField(max_length=150, unique=True)
-
-    def __str__(self):
-        return self.name
+from organizations.models import Organization
     
 class UserProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     organization = models.ForeignKey(Organization, on_delete=models.PROTECT)
-    role = models.ForeignKey("Role", on_delete=models.SET_NULL, null=True, blank=True)
     rut = models.CharField(max_length=12, unique=True)
     telefono = models.CharField(max_length=20, blank=True)
     direccion = models.TextField(blank=True)
