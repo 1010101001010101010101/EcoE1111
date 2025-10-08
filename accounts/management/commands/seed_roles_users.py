@@ -85,7 +85,7 @@ class Command(BaseCommand):
 
         # Crear usuarios para "Tu empresa"
         admin_user_2, created = User.objects.get_or_create(
-            username="admin_tu_empresa",
+            username="adminTuEmpresa",
             email="admin@tuempresa.com",
             defaults={"is_staff": True, "is_superuser": True}
         )
@@ -95,7 +95,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS("Usuario admin para 'Tu empresa' creado."))
 
         client_user_2, created = User.objects.get_or_create(
-            username="cliente_tu_empresa",  # Cambié "operador_tu_empresa" por "cliente_tu_empresa"
+            username="clienteTuEmpresa",  # Cambié "operador_tu_empresa" por "cliente_tu_empresa"
             email="cliente@tuempresa.com",  # Cambié "operador" por "cliente"
             defaults={"is_staff": True, "is_superuser": False}
         )

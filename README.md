@@ -15,19 +15,17 @@ pip install -r requirements.txt
 
 Crea un archivo .env en la raíz del proyecto con el siguiente contenido:
 
+DJANGO_SECRET_KEY=django-insecure-123456
+DJANGO_DEBUG=True
+DB_ENGINE=mysql
 DB_NAME=ecoenergy_db
 DB_USER=root
-DB_PASSWORD=tu_contraseña_mysql
+DB_PASSWORD=
 DB_HOST=localhost
-DB_PORT=3306
-SECRET_KEY=django-insecure-123456
-DEBUG=True
+DB_PORT=3307
 
-🧩 Base de datos
-Crear base de datos MySQL
-mysql -u root -p
-CREATE DATABASE ecoenergy_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-EXIT;
+ingresamos a wampserver-->phpmyadmin---> ingresamos con root sin contraseña---> seleccionamos MariaDB
+---> creamos la base de datos (ecoenergy_db)---> con el entorno env prendido realizamos lo siguiente---> APLICAR MIGRACIONES
 
 Aplicar migraciones
 python manage.py makemigrations
@@ -37,20 +35,21 @@ python manage.py migrate
 
 Para crear los datos base del sistema, ejecuta el siguiente comando:
 
-python manage.py seed_catalog_es
+python manage.py seed_modules
+python manage.py seed_roles_users
+python manage.py seed_device_data
+
+Estos comandos crean automáticamente:
+-Usuarios con permisos y roles
+-Productos con categorias, mediciones, alertruler,productalert etc con zonas asignadas
+Ojo tenemos que ingresar con un administrador para poder modificar un problema con organizacion ya que
+cuando cree la semilla no le asigno automaticamente una zona a una organizacion entonces
+tenemos que buscar las zonas sin organizacion y asignarselas.
+podemos irnos a organizations--->ingresamos a cualquiera de las 3 y si veemos que no tiene una zona asignada, 
+se la podemos asignar a travez de un inline, Zona Centro, Zona Sur o Zona Norte. solo 1 por organizations.
 
 
-Este comando crea automáticamente:
-
-2 Category
-
-3 Product
-
-2 AlertRule
-
-Relaciones Product ↔ AlertRule con distintos umbrales
-
-1 Organization, 2 Zone y 3 Device
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 🧠 Panel de administración
 Acceder al admin
@@ -61,16 +60,24 @@ URL: http://127.0.0.1:8000/admin/
 
 Usuario de prueba:
 
-user: admin
+primero ingresamos con un admin, el cuenta con todos los permisos
+user: admin_mi_empresa
 pass: admin123
 
-🧩 Estructura principal
+desde aqui podemos ir a user profile y veemos en que
+organizacion esta nuestro user cliente_mi_empresa podemos ver que el esta en Mi empresa, luego nos vamos a device y le asignamos zonas y organizacion a los dispositivos que esten sin este.
 
-organizations → Organizaciones y zonas
+dejaremos solo 2 dispositivos en la zona Norte y 2 en la Zona Sur
+los que dejemos en la zona norte se los asignamos a mi empresa
+y los que dejemos en Zona Sur se los asignamos a la organizacion tu empresa.
 
-dispositivos → Dispositivos, categorías, productos, mediciones
+Cliente Prueba
 
-accounts → Usuarios, roles y autenticación
+despues ingresamos con:
+user: cliente_mi_empresa
+password: cliente123
+
+
 
 🧾 Git y ramas
 
