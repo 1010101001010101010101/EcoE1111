@@ -47,12 +47,10 @@ class ProductAlertRule(models.Model):
 
 class Zone(models.Model):
     name = models.CharField(max_length=120, unique=True)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)  # Solo auto_now_add
+    organization = models.ForeignKey('organizations.Organization', on_delete=models.CASCADE)  # Relación con organización
 
     def __str__(self):
         return self.name
-
 
 
 class Device(models.Model):

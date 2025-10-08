@@ -22,9 +22,9 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(f"Organizaciones creadas: {org_tu_empresa.name}, {org_mi_empresa.name}, {org_nuestra_empresa.name}"))
 
-        # Asignar zonas a las organizaciones
-        org_tu_empresa.zones.add(zone_norte)
-        org_mi_empresa.zones.add(zone_sur)
+        # Asignar zonas a las organizaciones (usa `zones.add()` porque es una relación ManyToMany)
+        org_mi_empresa.zones.add(zone_norte)
+        org_tu_empresa.zones.add(zone_sur)
         org_nuestra_empresa.zones.add(zone_central)
 
         self.stdout.write(self.style.SUCCESS(f"Zonas asignadas a las organizaciones exitosamente"))

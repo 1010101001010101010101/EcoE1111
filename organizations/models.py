@@ -5,11 +5,9 @@ class Organization(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        from dispositivos.models import Zone  # Importamos aquí para evitar la importación circular
-        # Lógica para asignar la zona a la organización si es necesario
-        super(Organization, self).save(*args, **kwargs)
+    
+    # Relación Many-to-Many con zonas
+    zones = models.ManyToManyField("dispositivos.Zone", related_name="organizations", blank=True)
 
     def __str__(self):
         return self.name
