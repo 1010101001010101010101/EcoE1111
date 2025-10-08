@@ -27,10 +27,7 @@ class Command(BaseCommand):
         org_mi_empresa.zones.add(zone_sur)
         org_nuestra_empresa.zones.add(zone_central)
 
-        self.stdout.write(self.style.SUCCESS(f"Zonas asignadas a organizaciones:"))
-        self.stdout.write(self.style.SUCCESS(f"Tu empresa -> Zona Norte"))
-        self.stdout.write(self.style.SUCCESS(f"Mi empresa -> Zona Sur"))
-        self.stdout.write(self.style.SUCCESS(f"Nuestra empresa -> Zona Central"))
+        self.stdout.write(self.style.SUCCESS(f"Zonas asignadas a las organizaciones exitosamente"))
 
         # Crear categorías de productos
         categories = ["Electrónica", "Mecánica", "Hogar", "Oficina"]

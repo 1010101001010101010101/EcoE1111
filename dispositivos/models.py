@@ -1,6 +1,6 @@
 from django.db import models
 from organizations.models import Organization
-
+from django.core.exceptions import ValidationError
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -39,12 +39,20 @@ class ProductAlertRule(models.Model):
         return f"{product_name} - {rule_name}"
 
 
+# dispositivos/models.py
+
+
+
+
+
 class Zone(models.Model):
-    name = models.CharField(max_length=100)
-    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=120, unique=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)  # Solo auto_now_add
 
     def __str__(self):
         return self.name
+
 
 
 class Device(models.Model):
@@ -53,9 +61,14 @@ class Device(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
     zone = models.ForeignKey(Zone, on_delete=models.CASCADE, null=True, blank=True)
     organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True, blank=True)
-
+    status = models.CharField(max_length=10, choices=[('ACTIVE', 'Active'), ('INACTIVE', 'Inactive')], default='INACTIVE')
     def __str__(self):
         return f"{self.name} ({self.serial})"
+    
+    def clean(self):
+        # Validación para asegurarse de que el dispositivo tenga un producto y una zona
+        if not self.product and not self.zone:
+            raise ValidationError("El dispositivo debe estar asociado a un producto o una zona.")
 
 
 class Measurement(models.Model):

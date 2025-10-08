@@ -1,9 +1,8 @@
 from django.contrib import admin
-from .models import Category, Product, Zone, Device, Measurement, AlertRule, ProductAlertRule
+from .models import Category, Product, Device, Measurement, AlertRule, ProductAlertRule
+from django.core.exceptions import ValidationError
 
-# ─────────────────────────────
-# ACCIONES PERSONALIZADAS
-# ─────────────────────────────
+# Acción personalizada
 @admin.action(description="Activar dispositivos seleccionados")
 def make_active(modeladmin, request, queryset):
     queryset.update(status="ACTIVE")
@@ -17,9 +16,7 @@ admin.site.site_header = "EcoEnergy — Admin"
 admin.site.site_title = "EcoEnergy Admin"
 admin.site.index_title = "Panel de administración"
 
-# ─────────────────────────────
-# MAESTROS (Globales)
-# ─────────────────────────────
+# Registros del Admin para modelos
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("name",)
@@ -58,35 +55,11 @@ class ProductAlertRuleAdmin(admin.ModelAdmin):
 # ─────────────────────────────
 # POR ORGANIZACIÓN
 # ─────────────────────────────
-@admin.register(Zone)
-class ZoneAdmin(admin.ModelAdmin):
-    list_display = ("name", "organization")
-    search_fields = ("name", "organization__name")
-    list_filter = ("organization",)
-    ordering = ("organization", "name")
-    list_select_related = ("organization",)
-    list_per_page = 50
-
-    # Scoping por organización
-    def get_queryset(self, request):
-        qs = super().get_queryset(request)
-        if request.user.is_superuser:
-            return qs
-        return qs.filter(organization=request.user.userprofile.organization)
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "organization" and not request.user.is_superuser:
-            kwargs["queryset"] = kwargs["queryset"].filter(
-                id=request.user.userprofile.organization.id
-            )
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
-    list_display = ("name", "serial", "product", "zone", "organization")
+    list_display = ("name", "serial", "status", "product", "zone", "organization")
     search_fields = ("name", "serial", "product__name", "zone__name", "organization__name")
-    list_filter = ("organization", "zone", "product")
+    list_filter = ("organization", "zone", "product", "status")
     ordering = ("organization", "zone")
     list_select_related = ("product", "zone", "organization")
     list_per_page = 50
@@ -101,16 +74,21 @@ class DeviceAdmin(admin.ModelAdmin):
 
     # Limitar Zonas y Productos al crear
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if not request.user.is_superuser:
-            if db_field.name == "zone":
+        if db_field.name == "zone" or db_field.name == "organization":
+            # Importamos Zone solo cuando sea necesario para evitar ciclo de importación
+            from dispositivos.models import Zone
+            if not request.user.is_superuser:
                 kwargs["queryset"] = kwargs["queryset"].filter(
                     organization=request.user.userprofile.organization
                 )
-            elif db_field.name == "organization":
-                kwargs["queryset"] = kwargs["queryset"].filter(
-                    id=request.user.userprofile.organization.id
-                )
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+    # Validación en el modelo (Device)
+    def clean(self):
+        # Validación para asegurarse de que el dispositivo tenga un producto y una zona
+        if not self.product and not self.zone:
+            raise ValidationError("El dispositivo debe estar asociado a un producto o una zona.")
+        super().clean()
 
 
 # ─────────────────────────────
