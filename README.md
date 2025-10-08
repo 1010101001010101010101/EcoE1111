@@ -4,6 +4,7 @@
 ```bash
 git clone https://github.com/1010101001010101010101/EcoE1111.git
 cd EcoE1111
+git checkout cambios
 2️⃣ Crear y activar el entorno virtual
 python -m venv env
 env\Scripts\activate
