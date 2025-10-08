@@ -10,6 +10,12 @@ env\Scripts\activate
 
 3️⃣ Instalar dependencias
 pip install -r requirements.txt
+Si no funciona eso, correr estos comandos
+1x1:
+pip install django
+pip install python-dotenv
+pip install pymysql
+pip install django-widget-tweaks
 
 🗝️ Configurar variables de entorno
 
