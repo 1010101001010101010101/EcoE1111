@@ -6,6 +6,8 @@ git clone https://github.com/1010101001010101010101/EcoE1111.git
 cd EcoE1111
 git checkout cambios
 2️⃣ Crear y activar el entorno virtual
+Get-ExecutionPolicy
+Set-ExecutionPolicy RemoteSigned
 python -m venv env
 env\Scripts\activate
 
