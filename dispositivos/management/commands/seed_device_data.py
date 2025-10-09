@@ -8,13 +8,6 @@ class Command(BaseCommand):
     help = "Crea organizaciones, zonas, productos, dispositivos, mediciones y reglas de alerta."
 
     def handle(self, *args, **options):
-        # Crear zonas
-        zone_norte, created = Zone.objects.get_or_create(name="Zona Norte")
-        zone_sur, created = Zone.objects.get_or_create(name="Zona Sur")
-        zone_central, created = Zone.objects.get_or_create(name="Zona Central")
-
-        self.stdout.write(self.style.SUCCESS(f"Zonas creadas: {zone_norte.name}, {zone_sur.name}, {zone_central.name}"))
-
         # Crear organizaciones
         org_tu_empresa, created = Organization.objects.get_or_create(name="Tu empresa")
         org_mi_empresa, created = Organization.objects.get_or_create(name="Mi empresa")
@@ -22,12 +15,12 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS(f"Organizaciones creadas: {org_tu_empresa.name}, {org_mi_empresa.name}, {org_nuestra_empresa.name}"))
 
-        # Asignar zonas a las organizaciones (usa `zones.add()` porque es una relación ManyToMany)
-        org_mi_empresa.zones.add(zone_norte)
-        org_tu_empresa.zones.add(zone_sur)
-        org_nuestra_empresa.zones.add(zone_central)
+        # Crear zonas y asignarlas a las organizaciones
+        zone_norte, created = Zone.objects.get_or_create(name="Zona Norte", organization=org_mi_empresa)
+        zone_sur, created = Zone.objects.get_or_create(name="Zona Sur", organization=org_tu_empresa)
+        zone_central, created = Zone.objects.get_or_create(name="Zona Central", organization=org_nuestra_empresa)
 
-        self.stdout.write(self.style.SUCCESS(f"Zonas asignadas a las organizaciones exitosamente"))
+        self.stdout.write(self.style.SUCCESS(f"Zonas creadas: {zone_norte.name}, {zone_sur.name}, {zone_central.name}"))
 
         # Crear categorías de productos
         categories = ["Electrónica", "Mecánica", "Hogar", "Oficina"]
