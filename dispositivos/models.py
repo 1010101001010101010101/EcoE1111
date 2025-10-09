@@ -39,10 +39,6 @@ class ProductAlertRule(models.Model):
         return f"{product_name} - {rule_name}"
 
 
-# dispositivos/models.py
-
-
-
 
 
 class Zone(models.Model):
